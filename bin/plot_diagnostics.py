@@ -34,21 +34,19 @@ def movie(infile_accomplished_fields, infile_target_fields=None, outdir=None, ch
         if infile_target_fields is not None:
             cut_accomplished = np.in1d(target_fields['ID'], accomplished_fields['ID'][0:ii * chunk])
             #cut_accomplished[ii] = True
-            proj = obztak.utils.ortho.safeProj(basemap,
-                                                 target_fields['RA'][np.logical_not(cut_accomplished)],
+            proj = basemap.proj(target_fields['RA'][np.logical_not(cut_accomplished)],
                                                  target_fields['DEC'][np.logical_not(cut_accomplished)])
             basemap.scatter(*proj, c=np.tile(0, np.sum(np.logical_not(cut_accomplished))), edgecolor='none', s=25, vmin=0, vmax=4, cmap='summer_r')
 
-        proj = obztak.utils.ortho.safeProj(basemap, accomplished_fields['RA'][0:(ii * chunk) + 1], accomplished_fields['DEC'][0:(ii * chunk) + 1])
+        proj = basemap.proj(accomplished_fields['RA'][0:(ii * chunk) + 1], accomplished_fields['DEC'][0:(ii * chunk) + 1])
         basemap.scatter(*proj, c=accomplished_fields['TILING'][0:(ii * chunk) + 1], edgecolor='none', s=25, vmin=0, vmax=4, cmap='summer_r')
         colorbar = plt.colorbar(label='Tiling')
 
         # Show the selected field
         if chunk == 1:
-            proj = obztak.utils.ortho.safeProj(basemap, [accomplished_fields['RA'][ii]], [accomplished_fields['DEC'][ii]])
+            proj = basemap.proj([accomplished_fields['RA'][ii]], [accomplished_fields['DEC'][ii]])
         else:
-            proj = obztak.utils.ortho.safeProj(basemap,
-                                                 accomplished_fields['RA'][ii * chunk:(ii + 1) * chunk],
+            proj = basemap.proj(accomplished_fields['RA'][ii * chunk:(ii + 1) * chunk],
                                                  accomplished_fields['DEC'][ii * chunk:(ii + 1) * chunk])
         basemap.scatter(*proj, c='magenta', edgecolor='none', s=25)
 
@@ -79,7 +77,7 @@ def slew(infile_accomplished_fields, tag=None):
 
     # Inset panel
     if np.any(accomplished_fields['SLEW'] > 20.):
-        a = plt.axes([.4, .4, .45, .45], axisbg='w')
+        a = plt.axes([.4, .4, .45, .45], facecolor='w')
         max_slew = np.max(accomplished_fields['SLEW'])
         plt.hist(accomplished_fields['SLEW'], bins=np.arange(20., max_slew + 2., 1.), color='green')
         plt.xlabel('Slew Angle (deg)')
@@ -117,8 +115,7 @@ def slewAnalysis(infile_accomplished_fields):
         index_min = max(0, index - 10)
         index_max = min(len(accomplished_fields['DATE']), index + 11)
 
-        proj = obztak.utils.ortho.safeProj(basemap,
-                                             accomplished_fields['RA'][index_min:index_max],
+        proj = basemap.proj(accomplished_fields['RA'][index_min:index_max],
                                              accomplished_fields['DEC'][index_min:index_max])
         basemap.scatter(*proj, c=np.arange(index_min, index_max), edgecolor='none', s=50, vmin=index_min, vmax=index_max, cmap='Spectral')
         colorbar = plt.colorbar(label='Index')
@@ -175,7 +172,7 @@ def airmass(infile_accomplished_fields, tag=None):
         plt.savefig('airmass_sequential_%s.pdf'%(tag))
 
     fig, basemap = obztak.utils.ortho.makePlot(accomplished_fields['DATE'][0], figsize=(10.5, 8.5), s=50, dpi=80, center=(0., -90.), airmass=False, moon=False)
-    proj = obztak.utils.ortho.safeProj(basemap, accomplished_fields['RA'], accomplished_fields['DEC'])
+    proj = basemap.proj(accomplished_fields['RA'], accomplished_fields['DEC'])
     basemap.scatter(*proj, c=accomplished_fields['AIRMASS'], edgecolor='none', s=50, alpha=0.5, vmin=np.min(accomplished_fields['AIRMASS']), vmax=2, cmap='RdYlGn_r')
     colorbar = plt.colorbar(label='Airmass')
     if tag is not None:
@@ -200,12 +197,11 @@ def progress(infile_accomplished_fields, date, infile_target_fields=None, tag=No
     if infile_target_fields is not None:
         #target_fields = np.recfromtxt(infile_target_fields, delimiter=',', names=True)
         target_fields = obztak.utils.fileio.csv2rec(infile_target_fields)
-        proj = obztak.utils.ortho.safeProj(basemap,
-                                             target_fields['RA'][np.logical_not(cut_accomplished)],
+        proj = basemap.proj(target_fields['RA'][np.logical_not(cut_accomplished)],
                                              target_fields['DEC'][np.logical_not(cut_accomplished)])
         basemap.scatter(*proj, c=np.tile(0, np.sum(np.logical_not(cut_accomplished))), edgecolor='none', s=50, vmin=0, vmax=4, cmap='summer_r')
 
-    proj = obztak.utils.ortho.safeProj(basemap, accomplished_fields['RA'][cut_accomplished], accomplished_fields['DEC'][cut_accomplished])
+    proj = basemap.proj(accomplished_fields['RA'][cut_accomplished], accomplished_fields['DEC'][cut_accomplished])
     basemap.scatter(*proj, c=accomplished_fields['TILING'][cut_accomplished], edgecolor='none', s=50, vmin=0, vmax=4, cmap='summer_r')
     colorbar = plt.colorbar(label='Tiling')
 
@@ -234,7 +230,7 @@ def tiling(infile_accomplished_fields, infile_target_fields=None, tag=None):
             y = np.cumsum(accomplished_fields['TILING'] == (ii + 1)) / float(np.sum(target_fields['TILING'] == (ii + 1)))
         else:
             y = np.cumsum(accomplished_fields['TILING'] == (ii + 1))
-        plt.plot(x, y, c=color, label='Tiling %i'%(ii))
+        plt.plot(x, y, c=color, label='Tiling %i'%(ii + 1))
 
     plt.xlabel('Sequential Field Observed')
     if infile_target_fields is not None:
@@ -280,14 +276,13 @@ if __name__ == '__main__':
     #progress('accomplished_fields.txt', '2017/6/30 10:32:51', infile_target_fields='target_fields.txt')
    
 
-    
-    progress(args.scheduled, '2017/6/30 10:32:51', infile_target_fields='target_fields.csv', tag=args.tag)
-    slew(args.scheduled, tag=args.tag)
-    #slewAnalysis(args.scheduled)
-    airmass(args.scheduled, tag=args.tag)
-    #hourAngle(args.scheduled)
-    
-    tiling(args.scheduled, infile_target_fields='target_fields.csv', tag=args.tag)
+    #slew(args.scheduled, tag=args.tag)
+    slewAnalysis(args.scheduled)
+    #airmass(args.scheduled, tag=args.tag)
+    #hourAngle(args.scheduled, tag=args.tag)
+    #date = '2019/08/01 10:24:15'
+    #progress(args.scheduled, date, infile_target_fields='~/Research/maglites/maglites2_fields.csv', tag=args.tag)
+    #tiling(args.scheduled, infile_target_fields='~/Research/maglites/maglites2_fields.csv', tag=args.tag)
 
     raw_input('...wait...')
 

@@ -78,6 +78,7 @@ def factory(cls, modules=None, **kwargs):
     # Select class (case-insensitive)
     lower = cls.lower()
     if lower not in members.keys():
+        print(members.keys())
         msg = "Unrecognized class: %s"%(cls)
         raise KeyError(msg)
 

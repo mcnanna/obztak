@@ -40,14 +40,16 @@ class Maglites2Survey(Survey):
         ['2018/07/23', 'full'],
         ]
 
-    # 2019A PREDICTED
+    # 2019A ACTUAL
     nights_2019A = [
-        ['2019/02/23', 'full'],
-        ['2019/02/24', 'full'],
-        ['2019/02/25', 'full'],
-        ['2019/02/26', 'full'],
-        ['2019/06/22', 'full'],
-        ['2019/06/23', 'full']
+        ['2019/02/06', 'first'],
+        ['2019/02/07', 'first'],
+        ['2019/02/08', 'first'],
+        ['2019/02/09', 'first'],
+        ['2019/07/28', 'full'],
+        ['2019/07/29', 'full'],
+        ['2019/07/30', 'full'],
+        ['2019/07/31', 'full']
         ]
 
     nights = nights_2018A + nights_2019A
@@ -226,7 +228,7 @@ class Maglites2Tactician(Tactician):
     def __init__(self, *args, **kwargs):
         super(Maglites2Tactician,self).__init__(*args,**kwargs)
         self.mode = kwargs.get('mode',None)
-        self.mode = 'alt'
+        #self.mode = 'alt'
 
     @property
     def weight(self):
@@ -240,7 +242,7 @@ class Maglites2Tactician(Tactician):
         moon_limit = 30.
         sel &= (moon_angle > moon_limit)
 
-        if self.mode == 'alt' or self.mode is None:
+        if self.mode == 'alt': #or self.mode is None:
             if (self.sun.alt > -0.28):
                 # No i-band if Sun altitude > -16 deg
                 sel &= (np.char.count('i',self.fields['FILTER']) > 0)
@@ -266,7 +268,7 @@ class Maglites2Tactician(Tactician):
                 sel &= (np.char.count('i',self.fields['FILTER']) > 0)
             else:
                 sel &= (np.char.count('r',self.fields['FILTER']) > 0)
-        else:
+        elif self.mode is not None:
             raise ValueError("Unrecognized mode: %s"%self.mode)
 
         # Airmass cut

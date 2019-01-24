@@ -222,6 +222,8 @@ class CoverageTactician(Tactician):
     def weight(self):
         sel = self.viable_fields
         weight = self.hour_angle
+        #if 60 < self.fields['RA'] < 150:
+        #    weight += np.abs(120-self.fields['RA']) # Mitch, weights toward RA of 120
         weight[~sel] = np.inf
         weight += 6. * 360. * self.fields['TILING'] # Was 6, 60
         weight += self.slew**3 # slew**2
@@ -255,6 +257,17 @@ class ConditionTactician(Tactician):
 
         if self.mode == 'great':
             weight += 5000. * (self.fields['DEC'] > -80)
+
+        # Mitch: Adjusted to favor outer edge in 2019/02 run
+        if self.date.tuple()[1] == 2: # Month is Febrary
+            ra_term = (150 - self.fields['RA'])
+            dec_term = np.abs(-28 - self.fields['DEC'])
+            weight += (50*ra_term + 25*dec_term) * ((self.fields['RA'] < 150) & (self.fields['RA'] > 60))
+            # Don't overcorrect and extend into region on the other side of the DES footprint:
+            weight += 1e6 * (self.fields['RA'] > 180)
+
+        # Try hard to do the first tiling
+        weight += 1e6 * (self.fields['TILING'] - 1)
 
         return weight
 
