@@ -201,9 +201,13 @@ class Maglites2FieldArray(FieldArray):
         and discard = False and delivered = True and flavor = 'object'
         and object like '%(object_fmt)s%%'
         -- #Discard exposures with teff < 0.1
-        and not (qc_teff < 0.05 and (date > '2018/07/21 12:00:00' and date < '2018/07/22 12:00:00'))
+        and not (qc_teff < 0.1)
         ORDER BY utc_beg %(limit)s
         """%kwargs
+        # Previously, the second to last line in the above query read:
+        # and not (qc_teff < 0.05 and (date > '2018/07/21 12:00:00' and date < '2018/07/22 12:00:00'))
+        # This seemed like a one-time hack, so it was changed to reflect the usual case (and match the
+        # comment one line up). 
         return query
 
 
