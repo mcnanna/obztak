@@ -4,9 +4,8 @@ Plot json files.
 """
 import argparse
 import os
-import numpy as np
-import matplotlib
 import pylab as plt
+import numpy as np
 
 from obztak import get_survey
 from obztak.field import FieldArray
@@ -28,6 +27,8 @@ if __name__ == "__main__":
                         help='plot all exposures at once.')
     parser.add_argument('--airmass',default=None,type=float,
                         help='Airmass to plot.')
+    parser.add_argument('--latitude',default=-30.0,type=float,
+                        help='Center latitude on plot.')
     parser.add_argument('-c','--complete',const=None,nargs='?',action='append',
                         help="fields that have been completed.")
     parser.add_argument('-o','--outfile',
@@ -46,9 +47,6 @@ if __name__ == "__main__":
         fields = fields + FieldArray.read(filename)
         if args.chunk: idx.append(len(fields)-1)
 
-    if np.any(fields['RA']) < 0:
-        raise ValueError("Negative RA not allowed by SISPI.")
-
     completed_fields = field_factory(survey)
     if args.complete is not None:
         for f in args.complete:
@@ -59,7 +57,7 @@ if __name__ == "__main__":
 
     movie = True if ext in MOVIES else False
         
-    options = dict(airmass=args.airmass,smash=False)
+    options = dict(airmass=args.airmass,smash=False,center=(0.0, args.latitude))
 
     if args.airmass is not None:
         options['airmass'] = args.airmass

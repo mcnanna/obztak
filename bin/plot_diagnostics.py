@@ -276,13 +276,13 @@ if __name__ == '__main__':
     #progress('accomplished_fields.txt', '2017/6/30 10:32:51', infile_target_fields='target_fields.txt')
    
 
-    #slew(args.scheduled, tag=args.tag)
-    slewAnalysis(args.scheduled)
-    #airmass(args.scheduled, tag=args.tag)
-    #hourAngle(args.scheduled, tag=args.tag)
-    #date = '2019/08/01 10:24:15'
-    #progress(args.scheduled, date, infile_target_fields='~/Research/maglites/maglites2_fields.csv', tag=args.tag)
-    #tiling(args.scheduled, infile_target_fields='~/Research/maglites/maglites2_fields.csv', tag=args.tag)
+    slew(args.scheduled, tag=args.tag)
+    #slewAnalysis(args.scheduled)
+    airmass(args.scheduled, tag=args.tag)
+    hourAngle(args.scheduled, tag=args.tag)
+    date = '2019/08/01 10:24:15'
+    progress(args.scheduled, date, infile_target_fields='~/Research/maglites/maglites2_fields.csv', tag=args.tag)
+    tiling(args.scheduled, infile_target_fields='~/Research/maglites/maglites2_fields.csv', tag=args.tag)
 
     raw_input('...wait...')
 
