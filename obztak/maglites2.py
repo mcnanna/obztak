@@ -27,6 +27,7 @@ PROGRAM = NAME.lower()
 PROPID  = '2018A-0242'
 PROPOSER = 'Bechtol'
 BANDS = ['r','i']
+#BANDS = ['g','r']
 TILINGS = [1,2,3,4]
 
 class Maglites2Survey(Survey):
