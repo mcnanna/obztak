@@ -27,7 +27,7 @@ def main():
     if args.utc_start and args.utc_end:
         windows = [[args.utc_start,args.utc_end]]
     else:
-        windows = scheduler.observation_windows
+        windows = scheduler.windows
 
     scheduled = FieldArray()
     for i,(start,end) in enumerate(windows):
