@@ -205,6 +205,9 @@ class Maglites2FieldArray(FieldArray):
         and not (qc_teff < 0.1)
         ORDER BY utc_beg %(limit)s
         """%kwargs
+        
+        #and not (qc_teff < 0.1 and date < '2019/01/01 00:00:00')
+
         # Previously, the second to last line in the above query read:
         # and not (qc_teff < 0.05 and (date > '2018/07/21 12:00:00' and date < '2018/07/22 12:00:00'))
         # This seemed like a one-time hack, so it was changed to reflect the usual case (and match the
