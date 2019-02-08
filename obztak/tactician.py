@@ -259,10 +259,12 @@ class ConditionTactician(Tactician):
             weight += 5000. * (self.fields['DEC'] > -80)
 
         # Mitch: Adjusted to favor outer edge in 2019/02 run
+        # This should be removed after that run is over
         if self.date.tuple()[1] == 2: # Month is February
             ra_term = (150 - self.fields['RA'])
             dec_term = np.abs(-28 - self.fields['DEC'])
-            weight += (50*ra_term + 25*dec_term) * ((self.fields['RA'] < 150) & (self.fields['RA'] > 60)) * (self.fields['TILING'] - 1) # This last term only applies the weight to tilings after the first
+            weight += (50*ra_term + 25*dec_term) * ((self.fields['RA'] < 150) & (self.fields['RA'] > 60)) * (self.fields['TILING'] - 1)
+            # The last term in the above expression only applies the weight to tilings after the first (we won't get past the 2nd tiling)
             # Don't overcorrect and extend into region on the other side of the DES footprint:
             weight += 1e6 * (self.fields['RA'] > 180)
 
