@@ -866,7 +866,8 @@ def plot_coverage(fields,nitestr,outfile=None,**kwargs):
         f = fields[fields['FILTER'] == b]
         t = target[target['FILTER'] == b]
 
-        bmap = DECamMcBride()
+        #bmap = DECamMcBride()
+        bmap = DECamOrtho()
         bmap.draw_des()
         bmap.draw_galaxy(10)
 
