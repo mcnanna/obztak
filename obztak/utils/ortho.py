@@ -978,8 +978,8 @@ def plot_nightsum(fields,nitestr,date):
     plt.savefig('nightsum_psf_%s.png'%nitestr,bbox_inches='tight')
 
     plt.figure()
-    step_kwargs['bins'] = np.linspace(0,1.5,nbins)
-    fill_kwargs['bins'] = np.linspace(0,1.5,nbins)
+    step_kwargs['bins'] = np.linspace(0,2.3,nbins)
+    fill_kwargs['bins'] = np.linspace(0,2.3,nbins)
     plt.hist(new['teff'],color='green',zorder=10,label='Observed tonight', **fill_kwargs)
     plt.hist(new['teff'],color='green',zorder=10, **step_kwargs)
     plt.hist(old['teff'],color='0.5',label='Observed previously', **fill_kwargs)
